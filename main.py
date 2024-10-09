@@ -23,9 +23,10 @@ async def startup():
 
 # Define allowed origins
 origins = [
+    "http://localhost:3100",
     "http://localhost:3300",
     "http://localhost:3300/add",
-    "http://localhost:3300/dashboard",# Your frontend app's URL
+    "http://localhost:3300/dashboard",  # Your frontend app's URL
     # Add other origins if needed
 ]
 

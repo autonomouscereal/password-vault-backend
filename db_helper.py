@@ -56,7 +56,7 @@ class DBHelper:
                 user=user, database=database, password=password, port=port, host=host
             )
             await conn.close()
-        except Exception:
+        except asyncpg.InvalidCatalogNameError:
             print(f"Database '{database}' does not exist. Creating it...")
             sys_conn = await asyncpg.connect(
                 database='postgres', user=user, password=password, port=port, host=host
@@ -64,6 +64,9 @@ class DBHelper:
             await sys_conn.execute(f'CREATE DATABASE "{database}" OWNER "{user}"')
             await sys_conn.close()
             print(f"Database '{database}' created successfully.")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            sys.exit(1)
 
     async def get_db_connection(self):
         return await asyncpg.connect(
