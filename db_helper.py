@@ -3,6 +3,7 @@ import asyncpg
 import sys
 from credential_manager import CredentialManager
 
+
 class DBHelper:
     def __init__(self):
         self.credentials = CredentialManager.get_db_credentials()
@@ -94,21 +95,22 @@ class DBHelper:
         finally:
             await conn.close()
 
-    async def add_user(self, id: int, email: str):
+    async def add_user(self, user_id: int, email: str):
         conn = await self.get_db_connection()
         try:
             await conn.execute("""
                  INSERT INTO users (id, email)
                 VALUES ($1, $2)
                 ON CONFLICT DO NOTHING;
-            """, id, email)
+            """, user_id, email)
         except asyncpg.UniqueViolationError as e:
             raise e
         finally:
             await conn.close()
 
     # Password Entry methods
-    async def add_password_entry(self, user_id: int, website: str, username: str, encrypted_password: str, notes: str = None):
+    async def add_password_entry(self, user_id: int, website: str, username: str, encrypted_password: str,
+                                 notes: str = None):
         conn = await self.get_db_connection()
         try:
             await conn.execute("""
@@ -138,7 +140,9 @@ class DBHelper:
         finally:
             await conn.close()
 
-    async def update_password_entry(self, user_id: int, entry_id: int, website: str, username: str, encrypted_password: str, notes: str):
+    async def update_password_entry(self, user_id: int, entry_id: int, website: str, username: str,
+                                    encrypted_password: str, notes: str):
+
         conn = await self.get_db_connection()
         try:
             await conn.execute("""

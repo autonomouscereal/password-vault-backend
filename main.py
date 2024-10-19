@@ -2,6 +2,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from typing import List
 
+from starlette.middleware.trustedhost import TrustedHostMiddleware
+
 from models import PasswordEntryCreate, PasswordEntryUpdate, PasswordEntry
 from db_helper import DBHelper
 import logging
@@ -23,10 +25,8 @@ async def startup():
 
 # Define allowed origins
 origins = [
-    "http://localhost:3100",
-    "http://localhost:3300",
-    "http://localhost:3300/add",
-    "http://localhost:3300/dashboard",  # Your frontend app's URL
+    "https://localhost",
+    "https://localhost:3300",
     # Add other origins if needed
 ]
 
@@ -37,6 +37,10 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],     # Allow all HTTP methods
     allow_headers=["*"],     # Allow all headers
+)
+
+app.add_middleware(
+    TrustedHostMiddleware, allowed_hosts=["*"]
 )
 
 @app.post("/passwords/", response_model=PasswordEntry)

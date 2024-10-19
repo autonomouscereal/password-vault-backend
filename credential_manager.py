@@ -1,5 +1,6 @@
 import os
 
+
 class CredentialManager:
     @staticmethod
     def get_db_credentials():

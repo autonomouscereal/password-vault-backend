@@ -3,14 +3,17 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
+
 class PasswordEntryBase(BaseModel):
     website: str
     username: str
     password: str
     notes: Optional[str] = None
 
+
 class PasswordEntryCreate(PasswordEntryBase):
     pass
+
 
 class PasswordEntryUpdate(BaseModel):
     website: Optional[str]

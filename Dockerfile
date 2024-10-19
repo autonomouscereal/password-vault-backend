@@ -20,17 +20,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     postgresql \
     postgresql-contrib \
+    nginx \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Supervisor using pip for Python 3
-RUN pip install supervisor
-
 # Copy the application code
 COPY . .
+
+# Copy SSL certificates
+COPY certs/server.crt /etc/ssl/certs/server.crt
+COPY certs/server.key /etc/ssl/private/server.key
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy and set up Supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -39,8 +45,8 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
-# Expose port 3100
-EXPOSE 3200
+# Expose port 443 for HTTPS
+EXPOSE 443
 
 # Entrypoint to initialize PostgreSQL and start Supervisor
 ENTRYPOINT ["/bin/bash", "-c", "/init.sh && supervisord -n -c /etc/supervisor/conf.d/supervisord.conf"]
