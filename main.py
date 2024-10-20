@@ -1,4 +1,6 @@
 # main.py
+import os
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from typing import List
 
@@ -23,12 +25,22 @@ db_helper = DBHelper()
 async def startup():
     await db_helper.init_db()
 
-# Define allowed origins
-origins = [
-    "https://localhost",
-    "https://localhost:3300",
-    # Add other origins if needed
-]
+# Determine environment
+environment = os.getenv('ENVIRONMENT', 'development')
+
+# Define allowed origins based on environment
+if environment == 'production':
+    origins = [
+        "https://pass.cerealsoft.com",
+        "https://auth.cerealsoft.com",
+        # Add other production origins if needed
+    ]
+else:
+    origins = [
+        "https://localhost",
+        "https://localhost:3300",
+        # Add other origins if needed
+    ]
 
 # Add CORS middleware to the app
 app.add_middleware(
